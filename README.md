@@ -2,11 +2,32 @@
 
 FastAPI + React interview scaffold. Lean by design — structure is ready, logic is not.
 
+## Creating a new project from this boilerplate
+
+**Without git history** (clean slate):
+```bash
+bunx degit chemalopezp/boilerplate <project-name>
+cd <project-name>
+git init && git add . && git commit -m "init"
+```
+
+**With git history:**
+```bash
+git clone https://github.com/chemalopezp/boilerplate <project-name>
+cd <project-name>
+git remote remove origin
+```
+
+When ready to push to a new remote:
+```bash
+gh repo create <project-name> --private --source=. --push
+```
+
 ## Stack
 
 | Layer | Choice |
 |---|---|
-| Backend | Python 3.12, FastAPI, async SQLAlchemy |
+| Backend | Python 3.12, FastAPI, SQLModel |
 | Frontend | React 19, Vite, TypeScript |
 | Database | PostgreSQL 16 (Docker) |
 | Package managers | `uv` (Python), `bun` (Node) |
