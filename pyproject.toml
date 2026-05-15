@@ -4,10 +4,10 @@ version = "0.1.0"
 description = "Casca interview boilerplate"
 requires-python = ">=3.12"
 dependencies = [
+  "asyncpg>=0.31.0",
   "fastapi[standard]",
-  "sqlalchemy[asyncio]>=2.0",
-  "asyncpg",
   "pydantic-settings",
+  "sqlmodel>=0.0.38",
 ]
 
 [dependency-groups]

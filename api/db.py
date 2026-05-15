@@ -1,14 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase
+from sqlmodel import SQLModel
 
 from api.config import settings
 
-engine = create_async_engine(settings.database_url, echo=False)
-AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
-
-
-class Base(DeclarativeBase):
-    pass
+engine = create_async_engine(settings.async_database_url, echo=False)
+AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
 async def get_session() -> AsyncSession:
@@ -16,11 +12,17 @@ async def get_session() -> AsyncSession:
         yield session
 
 
-# Pessimistic locking pattern — use for any financial mutation to prevent race conditions.
-# Locks the row for the duration of the transaction; no concurrent update can proceed until commit.
+# Define models by extending SQLModel with table=True — no separate Base needed.
+# The same class works as both a Pydantic schema and a DB table.
 #
 # Example:
-#   result = await session.execute(select(Model).where(Model.id == id).with_for_update())
-#   record = result.scalar_one()
-#   record.status = "processed"
+#   class Loan(SQLModel, table=True):
+#       id: int | None = Field(default=None, primary_key=True)
+#       amount: float
+#       status: str = "pending"
+#
+# Pessimistic locking pattern — use for financial mutations to prevent race conditions.
+#   result = await session.execute(select(Loan).where(Loan.id == id).with_for_update())
+#   loan = result.scalar_one()
+#   loan.status = "disbursed"
 #   await session.commit()
