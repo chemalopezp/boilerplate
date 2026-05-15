@@ -21,3 +21,11 @@ lint:
 # Format
 format:
     uv run ruff format .
+
+# Start Hono BFF dev server
+bff-dev:
+    cd bff && bun dev
+
+# Test BFF
+bff-test:
+    cd bff && bun test

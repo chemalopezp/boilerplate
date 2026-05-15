@@ -1,0 +1,19 @@
+// Switch provider to "mongodb" for MongoDB interviews.
+// Then run: bunx prisma generate
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Add models here as requirements arrive.
+
+// --- MONGODB EXAMPLE MODEL ---
+// If using MongoDB, your models MUST use this exact ID syntax:
+// model User {
+//   id    String @id @default(auto()) @map("_id") @db.ObjectId
+//   email String @unique
+// }
