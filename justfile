@@ -14,9 +14,9 @@ web-dev:
 test:
     uv run pytest -v
 
-# Lint
+# Lint + type-check
 lint:
-    uv run ruff check .
+    uv run ruff check . && uv run pyright api/
 
 # Format
 format:
