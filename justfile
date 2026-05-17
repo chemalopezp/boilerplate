@@ -29,3 +29,8 @@ bff-dev:
 # Test BFF
 bff-test:
     cd bff && bun test
+
+# Drop and recreate the database (wipes all data)
+db-reset:
+    docker compose down -v
+    docker compose up -d db
