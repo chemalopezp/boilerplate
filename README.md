@@ -1,87 +1,91 @@
 # Boilerplate
 
-FastAPI + React interview scaffold. Lean by design — structure is ready, logic is not.
+FastAPI + React + Hono interview scaffold. Lean by design — structure is ready, logic is not.
 
-## Creating a new project from this boilerplate
+## Use this boilerplate
 
-**Without git history** (clean slate):
+**Clean slate:**
 ```bash
 bunx degit chemalopezp/boilerplate <project-name>
 cd <project-name>
 git init && git add . && git commit -m "init"
 ```
 
-**With git history:**
+**With history:**
 ```bash
 git clone https://github.com/chemalopezp/boilerplate <project-name>
 cd <project-name>
 git remote remove origin
 ```
 
-When ready to push to a new remote:
+**Push to a new remote when ready:**
 ```bash
 gh repo create <project-name> --private --source=. --push
 ```
+
+---
 
 ## Stack
 
 | Layer | Choice |
 |---|---|
-| Backend | Python 3.12, FastAPI, SQLModel |
+| Python backend | FastAPI, SQLModel, asyncpg |
+| Node backend | Hono, Prisma, Zod |
 | Frontend | React 19, Vite, TypeScript |
 | Database | PostgreSQL 16 (Docker) |
 | Package managers | `uv` (Python), `bun` (Node) |
 | Task runner | `just` |
 
-## Running
-
-```bash
-# 1. Start postgres
-just db-up
-
-# 2. Copy env
-cp .env.example .env
-
-# 3. Start API
-just api-dev        # → http://localhost:8000
-
-# 4. Start frontend (optional)
-just web-dev        # → http://localhost:5173
-
-# 5. Tests
-just test
-```
-
 ## Structure
 
 ```
-api/
-├── main.py      create_app() factory + routes
-├── config.py    pydantic-settings (reads .env)
-├── db.py        engine, session, Base, models
-├── schemas.py   Pydantic request/response models
-└── services.py  business logic (no HTTP coupling)
+api/                        Python backend (:8000)
+├── main.py                 create_app() factory + routes
+├── config.py               pydantic-settings (reads ASYNC_DATABASE_URL)
+├── db.py                   engine, session, SQLModel base
+├── schemas.py              Pydantic request/response models
+└── services.py             business logic
 
-web/src/
-├── App.tsx
-├── api/client.ts  typed fetch wrappers
-└── index.css
+bff/                        Node/TypeScript backend (:3000)
+├── src/index.ts            Hono app + routes
+├── src/db.ts               Prisma client singleton
+├── src/schemas.ts          Zod schemas
+├── src/services.ts         business logic
+└── prisma/schema.prisma    DB schema (switch provider for MongoDB)
+
+web/                        React frontend (:5173)
+└── src/
+    ├── App.tsx
+    ├── api/client.ts       typed fetch wrappers
+    └── index.css
+```
+
+## Running
+
+```bash
+just db-up                  # postgres on :5432
+cp .env.example .env
+
+just api-dev                # FastAPI  → http://localhost:8000
+just bff-dev                # Hono BFF → http://localhost:3000
+just web-dev                # Vite     → http://localhost:5173
+
+just test                   # Python tests
+just bff-test               # Node tests
 ```
 
 ## JIT Additions
 
 Add only when requirements call for it.
 
-**Migrations:**
+**Migrations (Python):**
 ```bash
 uv add alembic && alembic init alembic
-# wire alembic/env.py to settings.database_url
 ```
 
 **Agent orchestration:**
 ```bash
 uv add langgraph pydantic-ai
-# add api/agents.py with StateGraph
 ```
 
 **LLM:**
@@ -91,19 +95,18 @@ uv add anthropic
 
 **Vector search:**
 ```bash
-# switch docker-compose image: pgvector/pgvector:pg16
+# change docker-compose image → pgvector/pgvector:pg16
 uv add pgvector
 ```
 
-**Idempotency** (financial side-effect routes):
-Store `Idempotency-Key` + response in Redis. Return cached response on replay.
-
-**Sandboxed execution:**
-```bash
-uv add e2b
+**MongoDB (BFF):**
+```prisma
+# bff/prisma/schema.prisma — change provider to "mongodb"
+# model IDs must use: @id @default(auto()) @map("_id") @db.ObjectId
 ```
 
-**Observability:**
-```bash
-uv add opentelemetry-sdk opentelemetry-instrumentation-fastapi
-```
+**Idempotency:** store `Idempotency-Key` + response in Redis; return cached response on replay.
+
+**Sandboxed execution:** `uv add e2b`
+
+**Observability:** `uv add opentelemetry-sdk opentelemetry-instrumentation-fastapi`
