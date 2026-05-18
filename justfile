@@ -1,3 +1,11 @@
+# First-time setup: install deps, copy env, start database
+setup:
+    uv sync
+    cd web && bun install
+    cd bff && bun install
+    cp -n .env.example .env || true
+    docker compose up -d db
+
 # Start postgres (port 5432)
 db-up:
     docker compose up -d db

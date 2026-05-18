@@ -63,8 +63,7 @@ web/                        React frontend (:5173)
 ## Running
 
 ```bash
-just db-up                  # postgres on :5432
-cp .env.example .env
+just setup                  # first time: installs deps, copies .env, starts postgres
 
 just api-dev                # FastAPI  → http://localhost:8000
 just bff-dev                # Hono BFF → http://localhost:3000
@@ -72,6 +71,7 @@ just web-dev                # Vite     → http://localhost:5173
 
 just test                   # Python tests
 just bff-test               # Node tests
+just lint                   # ruff + pyright (Python), eslint (BFF)
 ```
 
 ## JIT Additions
